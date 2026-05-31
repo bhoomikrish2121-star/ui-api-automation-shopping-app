@@ -83,8 +83,8 @@ test.describe('Positive Test Cases - End-to-End Order Placement', () => {
       
       // Select country
       try {
-        await checkoutPage.enterCountry('India');
-        logger.info('✓ Country selected: India');
+        await checkoutPage.enterCountry('British Indian Ocean Territory');
+        logger.info('✓ Country selected: British Indian Ocean Territory');
       } catch (e) {
         logger.warn('Country selection faced issue, continuing...');
       }
@@ -95,6 +95,15 @@ test.describe('Positive Test Cases - End-to-End Order Placement', () => {
       
       await checkoutPage.enterCVV(testData.paymentDetails.cvv);
       logger.info('✓ CVV entered');
+
+       
+      // Select country
+      try {
+        await checkoutPage.enterCountry('India');
+        logger.info('✓ Country selected: India');
+      } catch (e) {
+        logger.warn('Country selection faced issue, continuing...');
+      }
   
       // Complete order placement
       logger.info('Step 7: Placing order...');

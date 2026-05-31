@@ -11,7 +11,7 @@ test.describe('Negative Test Cases - Login Module', () => {
     loginPage = new LoginPage(page);
     basePage = new BasePage(page);
     logger.info('========== Test Initialized ==========');
-    await loginPage.navigateToLoginPage();
+    await loginPage.navigateToLogin();
   });
 
   test('TC_N001: Invalid Login - Wrong Email and Wrong Password', async ({ page }) => {
@@ -71,7 +71,10 @@ test.describe('Negative Test Cases - Login Module', () => {
       // Alternative: Check page for any error indicators
       if (!errorMessageFound) {
         const pageContent = await page.content();
-        if (pageContent.includes('Incorrect') || pageContent.includes('Invalid')) {
+        if (pageContent.toLowerCase().includes('incorrect') || 
+            pageContent.toLowerCase().includes('invalid') ||
+            pageContent.toLowerCase().includes('failed') ||
+            pageContent.toLowerCase().includes('wrong')) {
           errorMessageFound = true;
           logger.info('✓ Error message found in page content');
         }

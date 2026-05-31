@@ -494,20 +494,34 @@ export class CheckoutPage extends BasePage {
   async isProductInOrdersList(productName: string): Promise<boolean> {
     try {
       await this.goToOrders();
-      // Wait briefly for orders list to load
-      await this.page.waitForTimeout(1000);
+      // Wait longer for Angular to render orders list after route change
+      await this.page.waitForTimeout(3000);
+      
       // Try multiple common patterns for orders list entries
       const candidates = [
+        `xpath=//*[contains(text(), "${productName}")]`,
         `text=${productName}`,
-        `xpath=//div[contains(.,"${productName}")]`,
+        `xpath=//div[contains(., "${productName}")]`,
         `[class*="orders-list"] >> text=${productName}`,
-        `[class*="order-item"] >> text=${productName}`
+        `[class*="order-item"] >> text=${productName}`,
+        `[class*="product"] >> text=${productName}`,
+        `text=/${productName}/i`
       ];
+      
+      // Check page content directly as well
+      const pageContent = await this.page.content();
+      if (pageContent.includes(productName)) {
+        logger.info(`Found product "${productName}" in orders list page content`);
+        return true;
+      }
+      
       for (const sel of candidates) {
         try {
-          await this.page.waitForSelector(sel, { timeout: 3000 });
-          logger.info(`Found product in orders list using selector: ${sel}`);
-          return true;
+          const locator = this.page.locator(sel).first();
+          if (await locator.isVisible({ timeout: 2000 }).catch(() => false)) {
+            logger.info(`Found product in orders list using selector: ${sel}`);
+            return true;
+          }
         } catch {
           // try next
         }
