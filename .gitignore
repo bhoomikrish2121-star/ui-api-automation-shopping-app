@@ -1,0 +1,10 @@
+node_modules/
+dist/
+*.log
+reports/
+test-results/
+.env
+.env.local
+.DS_Store
+*.spec.js
+*.spec.js.map

@@ -1,0 +1,30 @@
+{
+  "name": "ui-api-autoamiton-shopping-app",
+  "version": "1.0.0",
+  "description": "Playwright automation for shopping application UI flows",
+  "main": "index.js",
+  "scripts": {
+    "test": "playwright test",
+    "test:ui": "playwright test --ui",
+    "test:debug": "playwright test --debug",
+    "test:headed": "playwright test --headed",
+    "test:report": "playwright show-report",
+    "test:positive": "playwright test tests/UItests/positive/",
+    "test:negative": "playwright test tests/UItests/negative/",
+    "test:all": "playwright test --reporter=html,json,list"
+  },
+  "keywords": [
+    "playwright",
+    "automation",
+    "testing",
+    "e2e"
+  ],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@playwright/test": "^1.40.0",
+    "@types/node": "^20.0.0",
+    "typescript": "^5.0.0"
+  },
+  "dependencies": {}
+}
