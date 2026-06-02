@@ -67,78 +67,36 @@ export class BasePage {
     logger.info(`Filling field: ${selector} with value: ${text}`);
     try {
       const locator = this.page.locator(selector).first();
-      await locator.waitFor({ state: 'visible', timeout: 4000 });
+      await locator.waitFor({ state: 'visible', timeout: 3000 });
       await locator.fill(text);
     } catch (error) {
-      logger.warn(`Locator fill failed for ${selector}, trying page.fill: ${error}`);
+      logger.warn(`Locator fill failed for ${selector}, trying keyboard input: ${error}`);
       try {
-        // Try a quick page.fill with a short timeout to avoid waiting until the test-level timeout.
-        await this.page.fill(selector, text, { timeout: 3000 });
-        return;
-      } catch (err) {
-        logger.warn(`page.fill failed quickly for ${selector}: ${err}. Proceeding to JS/frame fallback.`);
-        try {
-          if (this.page.isClosed && this.page.isClosed()) throw new Error('Page is closed');
-
-          // First, try to find the element inside any frame (useful for payment iframes)
-          for (const frame of this.page.frames()) {
-            try {
-              const fh = await frame.$(selector);
-              if (!fh) continue;
-              const fSuccess = await fh.evaluate((el, val) => {
-                const input = el as HTMLInputElement | null;
-                if (!input) return false;
-                input.value = val;
-                input.dispatchEvent(new Event('input', { bubbles: true }));
-                input.dispatchEvent(new Event('change', { bubbles: true }));
-                return true;
-              }, text);
-              if (fSuccess) {
-                try {
-                  await fh.scrollIntoViewIfNeeded();
-                  await fh.focus();
-                  await this.page.keyboard.type(text, { delay: 20 });
-                } catch {
-                  // ignore
-                }
-                return;
-              }
-            } catch {
-              // ignore frame errors and try next frame
-            }
-          }
-
-          // Use element-handle evaluate on main page as a fallback
-          const handle = await this.page.$(selector);
-          if (!handle) throw new Error('Element handle not found for JS fallback');
-          const success = await handle.evaluate(
-            (el, val) => {
-              const input = el as HTMLInputElement | null;
-              if (!input) return false;
-              input.value = val;
-              input.dispatchEvent(new Event('input', { bubbles: true }));
-              input.dispatchEvent(new Event('change', { bubbles: true }));
-              return true;
-            },
-            text
-          );
-
-          if (!success) throw new Error('JS fallback could not set element value');
-
-          // As an additional safety, focus the element handle and type (best-effort)
-          try {
-            await handle.scrollIntoViewIfNeeded();
-            await handle.focus();
-            await this.page.keyboard.type(text, { delay: 20 });
-          } catch {
-            // ignore typing/focus failure if JS set value succeeded
-          }
-
-          return;
-        } catch (e2) {
-          logger.error(`Failed JS fallback for ${selector}: ${e2}`);
-          throw e2;
+        // Check if page is still open
+        if (this.page.isClosed()) {
+          throw new Error('Page is closed, cannot fill field');
         }
+
+        // Try clicking on the field first, then type
+        try {
+          const field = this.page.locator(selector).first();
+          await field.click().catch(() => {
+            // If click fails, just continue to typing
+            logger.debug(`Click failed on field, will try typing anyway`);
+          });
+        } catch {
+          // ignore click errors
+        }
+        
+        // Type the text using keyboard (with page check)
+        if (!this.page.isClosed()) {
+          await this.page.keyboard.type(text, { delay: 30 });
+        } else {
+          throw new Error('Page is closed, cannot type');
+        }
+      } catch (err) {
+        logger.error(`Failed to fill ${selector}: ${err}`);
+        throw err;
       }
     }
   }

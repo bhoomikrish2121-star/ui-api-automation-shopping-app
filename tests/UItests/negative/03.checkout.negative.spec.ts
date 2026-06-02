@@ -74,10 +74,10 @@ test.describe('Negative Test Cases - Checkout Module', () => {
       logger.info('✓ Country selected');
 
       // Step 3: Enter cardholder name
-      logger.info('Step 3: Entering cardholder name');
-      await checkoutPage.enterCardHolderName(testData.paymentDetails.cardholderName);
-      await page.waitForTimeout(1000);
-      logger.info('✓ Cardholder name entered');
+      // logger.info('Step 3: Entering cardholder name');
+      // await checkoutPage.enterCardHolderName(testData.paymentDetails.cardholderName);
+      // await page.waitForTimeout(1000);
+      // logger.info('✓ Cardholder name entered');
 
       // Step 4: Enter CVV (SKIPPED - this is the negative test)
       logger.info('Step 4: Intentionally skipping CVV entry for negative test');

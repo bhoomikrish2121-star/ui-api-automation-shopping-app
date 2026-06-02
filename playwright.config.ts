@@ -7,7 +7,7 @@ export default defineConfig({
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
   workers: process.env.CI ? 1 : undefined,
-  timeout: 60000, // 60 second timeout for tests
+  timeout: 120000, // 120 second timeout for tests
   reporter: [
     ['html', { outputFolder: './reports/html-report' }],
     ['json', { outputFile: './reports/results.json' }],

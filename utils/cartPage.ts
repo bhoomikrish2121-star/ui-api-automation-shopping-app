@@ -69,12 +69,15 @@ export class CartPage extends BasePage {
       logger.warn(`Clicking checkout button failed: ${e}`);
     }
 
+    // Add a small delay to ensure page navigation completes
+    await this.page.waitForTimeout(1500);
+
     try {
-      await this.page.waitForSelector('button:has-text("Place Order"), input[placeholder*="Country"], input[aria-label*="Country"]', { timeout: 7000 });
+      await this.page.waitForSelector('button:has-text("Place Order"), input[placeholder*="Country"], input[aria-label*="Country"]', { timeout: 5000 });
       logger.info('Checkout page indicators visible');
     } catch {
       try {
-        await this.page.waitForURL('**/checkout**', { timeout: 7000 });
+        await this.page.waitForURL('**/checkout**', { timeout: 5000 });
       } catch {
         logger.warn('Proceed to checkout did not navigate to checkout page reliably');
       }
