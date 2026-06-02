@@ -9,6 +9,7 @@
     "test:debug": "playwright test --debug",
     "test:headed": "playwright test --headed",
     "test:report": "playwright show-report",
+    "test:api": "playwright test tests/APIests/",
     "test:positive": "playwright test tests/UItests/positive/",
     "test:negative": "playwright test tests/UItests/negative/",
     "test:all": "playwright test --reporter=html,json,list"

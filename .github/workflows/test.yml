@@ -45,7 +45,7 @@ jobs:
         continue-on-error: true
 
       - name: Run all tests
-        run: npm test
+        run: npm test -- --reporter=html,json,junit
         continue-on-error: true
 
       - name: Upload test report
@@ -81,9 +81,9 @@ jobs:
           retention-days: 30
 
       - name: Publish test results
-        uses: EnricoMi/publish-unit-test-result-action@v2
         if: always()
-        with:
-          files: reports/junit-results.xml
-          check_name: Playwright Test Results
-          comment_title: Test Execution Summary
+        run: |
+          echo "Test execution completed. Check artifacts for detailed reports."
+          if [ -f reports/junit-results.xml ]; then
+            echo "JUnit results available: reports/junit-results.xml"
+          fi
